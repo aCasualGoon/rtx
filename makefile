@@ -17,7 +17,7 @@ SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
 # Name of the final executable
-TARGET = main
+TARGET = bin/main
 
 # Rule to link all object files to the final executable
 $(TARGET): $(OBJECTS)
