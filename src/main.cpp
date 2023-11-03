@@ -2,9 +2,7 @@
 #include "Shader.h"
 #include "Camera.h"
 
-using namespace std;
-
-constexpr const char *WINDOW_TITLE = "Hello World!";
+constexpr const char *WINDOW_TITLE = "Shaded Window. Exciting stuff!";
 constexpr int WINDOW_POS_X   = 100;
 constexpr int WINDOW_POS_Y   = 100;
 constexpr int WINDOW_SIZE_W  = 640;
