@@ -1,7 +1,8 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include "EngineContext.h"
-#include "drawing.h"
+#include "Shader.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -46,10 +47,14 @@ int main(int argc, char *argv[]) {
     if(!shader.create(SHADER_SOURCE_VERTEX,SHADER_SOURCE_FRAGMENT))
         return 1;
 
+    // initialize camera
+    Camera camera(&context, &shader);
+
     while(loop(&context)) {
-        draw(&context, &shader);
+        camera.render();
     }
 
-    context.cleanup();
+    camera.cleanup();
     shader.cleanup();
+    context.cleanup();
 }
