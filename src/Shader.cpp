@@ -28,6 +28,18 @@ bool Shader::create(const char *vertexSourceFile, const char *fragmentSourceFile
     const char *vertexSource = read_file(vertexSourceFile);
     const char *fragmentSource = read_file(fragmentSourceFile);
 
+    // Check if files loaded successfully
+    if (vertexSource == NULL) 
+    {
+        fprintf(stderr, "Could not read vertex shader source file %s\n", vertexSourceFile);
+        return false;
+    }
+    if (fragmentSource == NULL) 
+    {
+        fprintf(stderr, "Could not read fragment shader source file %s\n", fragmentSourceFile);
+        return false;
+    }
+
     // Create the shaders
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
