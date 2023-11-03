@@ -5,8 +5,10 @@
 
 /** @brief A struct representing a shader program. */
 struct Shader {
+private:
     GLuint program; /** The OpenGL shader program. */
     
+public:
     /**
      * @brief Creates a shader program from the given vertex and fragment source code files.
      * @param vertexSource The source code file for the vertex shader.
