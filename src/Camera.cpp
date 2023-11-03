@@ -37,13 +37,13 @@ Camera::Camera(EngineContext *context, Shader *shader)
     // UV coordinates
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat),(GLvoid*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
+
+    // Activate the shader
+    shader->use();
 }
 
 void Camera::render()
 {
-    // Activate the shader
-    shader->use();
-
     // Draw the quad
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
