@@ -1,5 +1,3 @@
-#include <iostream>
-#include <SDL2/SDL.h>
 #include "EngineContext.h"
 #include "Shader.h"
 #include "Camera.h"
