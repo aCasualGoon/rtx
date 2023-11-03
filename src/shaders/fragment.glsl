@@ -1,8 +1,10 @@
-#version 450
-#version 450
-
+#version 420
 out vec4 fragColor;
+vec4 frag();
+void main() {fragColor = frag();}
 
-void main() {
-    fragColor = vec4(gl_FragCoord.xy / vec2(1920, 1080), 0.0, 1.0);
+in vec2 uv;
+
+vec4 frag() {
+    return vec4(uv, 0.0, 1.0);
 }

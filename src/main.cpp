@@ -1,4 +1,5 @@
 #include <iostream>
+#include <SDL2/SDL.h>
 #include "EngineContext.h"
 #include "drawing.h"
 
@@ -11,6 +12,9 @@ constexpr int WINDOW_SIZE_W  = 640;
 constexpr int WINDOW_SIZE_H  = 480;
 constexpr int WINDOW_FLAGS   = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL;
 constexpr int RENDERER_FLAGS = SDL_RENDERER_ACCELERATED;
+
+constexpr const char *SHADER_SOURCE_VERTEX   = "src/shaders/vertex.glsl";
+constexpr const char *SHADER_SOURCE_FRAGMENT = "src/shaders/fragment.glsl";
 
 bool loop(EngineContext *context) {
     SDL_Event *event = &context->event;
@@ -37,10 +41,12 @@ int main(int argc, char *argv[]) {
     if(!context.create(WINDOW_TITLE, WINDOW_POS_X,WINDOW_POS_Y, WINDOW_SIZE_W,WINDOW_SIZE_H, WINDOW_FLAGS, RENDERER_FLAGS))
         return 1;
 
-    // main loop
+    // initialize shader
+    Shader shader;
+    if(!shader.create(SHADER_SOURCE_VERTEX,SHADER_SOURCE_FRAGMENT))
+        return 1;
+
     while(loop(&context)) {
-        // draw(&context);
-        Shader shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl");
-        draw_shader(&context, &shader);
+        draw(&context, &shader);
     }
 }

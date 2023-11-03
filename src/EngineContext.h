@@ -2,7 +2,6 @@
 #define _ENGINECONTEXT_H
 
 #include <SDL2/SDL.h>
-#include <GL/glew.h>
 
 /** @brief The EngineContext struct contains the necessary SDL and OpenGL contexts for the engine. */
 struct EngineContext {
@@ -27,8 +26,8 @@ struct EngineContext {
     /** @brief Cleans up the SDL and OpenGL contexts. */
     void cleanup();
 
-    /** @brief Destroys the EngineContext and cleans up the SDL and OpenGL contexts. */
-    ~EngineContext();
+    /** @brief Destructor that calls cleanup(). */
+    ~EngineContext() {cleanup();}
 };
 
 #endif//_ENGINECONTEXT_H

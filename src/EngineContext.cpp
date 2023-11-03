@@ -1,5 +1,7 @@
 #include "EngineContext.h"
 #include <iostream>
+#include <SDL2/SDL.h>
+#include <GL/glew.h>
 
 bool EngineContext::create(const char *title, int pos_x, int pos_y, int width, int height, int win_flags, int rnd_flags)
 {
@@ -49,8 +51,6 @@ bool EngineContext::create(const char *title, int pos_x, int pos_y, int width, i
 
     return true;
 }
-
-EngineContext::~EngineContext() { cleanup(); }
 
 void EngineContext::cleanup()
 {
