@@ -49,4 +49,7 @@ int main(int argc, char *argv[]) {
     while(loop(&context)) {
         draw(&context, &shader);
     }
+
+    context.cleanup();
+    shader.cleanup();
 }
