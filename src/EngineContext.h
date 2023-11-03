@@ -11,7 +11,7 @@ struct EngineContext {
     SDL_GLContext gl_context; /** The OpenGL context. */
 
     /**
-     * @brief Creates the SDL and OpenGL contexts and packages them into an EngineContext.
+     * @brief Creates the EngineContext.
      * @param title The title of the window.
      * @param pos_x The x position of the window.
      * @param pos_y The y position of the window.
@@ -23,7 +23,7 @@ struct EngineContext {
      */
     bool create(const char *title, int pos_x, int pos_y, int width, int height, int win_flags, int rnd_flags);
 
-    /** @brief Cleans up the SDL and OpenGL contexts. */
+    /** @brief Frees the SDL and OpenGL contexts. */
     void cleanup();
 
     /** @brief Destructor that calls cleanup(). */

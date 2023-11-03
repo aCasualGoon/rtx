@@ -37,7 +37,7 @@ bool loop(EngineContext *context) {
 }
 
 int main(int argc, char *argv[]) {
-    // initialize SDL and OpenGL
+    // initialize EngineContext
     EngineContext context;
     if(!context.create(WINDOW_TITLE, WINDOW_POS_X,WINDOW_POS_Y, WINDOW_SIZE_W,WINDOW_SIZE_H, WINDOW_FLAGS, RENDERER_FLAGS))
         return 1;
