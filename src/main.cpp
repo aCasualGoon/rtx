@@ -21,7 +21,7 @@ bool loop(EngineContext *context) {
             case SDL_QUIT:
                 running = false;
                 break;
-            case  SDL_WINDOWEVENT:
+            case SDL_WINDOWEVENT:
                 if (event->window.event == SDL_WINDOWEVENT_RESIZED)
                     glViewport(0, 0, event->window.data1, event->window.data2);
                 break;

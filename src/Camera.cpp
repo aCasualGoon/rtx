@@ -4,6 +4,15 @@
 
 Camera::Camera(EngineContext *context, Shader *shader)
 {
+    const GLfloat vertices[20] = {
+    //    X      Y     Z     U     V
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // Bottom left corner
+         1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // Bottom right corner
+         1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // Top right corner
+        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f  // Top left corner
+    };
+    const GLuint indices[6] = { 0, 1, 2, 2, 3, 0 };
+
     this->context = context;
     this->shader = shader;
 
