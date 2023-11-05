@@ -25,9 +25,6 @@ struct EngineContext {
 
     /** @brief Frees the SDL and OpenGL contexts. */
     ~EngineContext();
-
-    /** @brief Calls the object's destructor. */
-    void destruct() { this->~EngineContext(); }
 };
 
 #endif//_ENGINECONTEXT_H

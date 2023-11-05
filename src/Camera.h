@@ -57,9 +57,6 @@ public:
 
     /** @brief Destroys the camera object. */
     ~Camera();
-
-    /** @brief Calls the object's destructor. */
-    void destruct() { this->~Camera(); }
 };
 
 #endif//_CAMERA_H

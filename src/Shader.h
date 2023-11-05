@@ -22,9 +22,6 @@ public:
 
     /** @brief Cleans up the resources used by this shader program. */
     ~Shader();
-
-    /** @brief Calls the object's destructor. */
-    void destruct() { this->~Shader(); }
 };
 
 #endif//_SHADER_H
