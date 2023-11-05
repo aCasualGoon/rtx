@@ -83,20 +83,6 @@ void Camera::render()
     SDL_GL_SwapWindow(context->window);
 }
 
-void Camera::cleanup()
-{
-    // Unbind the VAO, VBO, and EBO
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    // Delete the VAO, VBO, and EBO
-    glDeleteBuffers(1, &EBO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteVertexArrays(1, &VAO);
-}
-
-
 // getters & setters
 vec3 Camera::get_position()
     { return vec3(this->transform[3][0], this->transform[3][1], this->transform[3][2]); }
@@ -120,3 +106,16 @@ float Camera::get_fov()
     { return this->fov; }
 void Camera::set_fov(float fov)
     { this->fov = fov; }
+
+Camera::~Camera()
+{
+    // Unbind the VAO, VBO, and EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    // Delete the VAO, VBO, and EBO
+    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteVertexArrays(1, &VAO);
+}

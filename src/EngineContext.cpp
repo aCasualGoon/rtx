@@ -16,7 +16,7 @@ bool EngineContext::create(const char *title, int pos_x, int pos_y, int width, i
     window = SDL_CreateWindow(title, pos_x, pos_y, width, height, win_flags);
     if (window == nullptr) {
         std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-        cleanup();
+        destruct();
         SDL_Quit();
         return false;
     }
@@ -25,7 +25,7 @@ bool EngineContext::create(const char *title, int pos_x, int pos_y, int width, i
     renderer = SDL_CreateRenderer(window, -1, rnd_flags);
     if (renderer == nullptr) {
         std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
-        cleanup();
+        destruct();
         SDL_Quit();
         return false;
     }
@@ -34,7 +34,7 @@ bool EngineContext::create(const char *title, int pos_x, int pos_y, int width, i
     gl_context = SDL_GL_CreateContext(window);
     if (gl_context == nullptr) {
         std::cerr << "SDL_GL_CreateContext Error: " << SDL_GetError() << std::endl;
-        cleanup();
+        destruct();
         SDL_Quit();
         return false;
     }
@@ -44,7 +44,7 @@ bool EngineContext::create(const char *title, int pos_x, int pos_y, int width, i
     GLenum glewError = glewInit();
     if (glewError != GLEW_OK) {
         std::cerr << "Error initializing GLEW! " << glewGetErrorString(glewError) << std::endl;
-        cleanup();
+        destruct();
         SDL_Quit();
         return false;
     }
@@ -52,7 +52,7 @@ bool EngineContext::create(const char *title, int pos_x, int pos_y, int width, i
     return true;
 }
 
-void EngineContext::cleanup()
+EngineContext::~EngineContext()
 {
     if(renderer != nullptr)
         SDL_DestroyRenderer(renderer);

@@ -24,10 +24,10 @@ struct EngineContext {
     bool create(const char *title, int pos_x, int pos_y, int width, int height, int win_flags, int rnd_flags);
 
     /** @brief Frees the SDL and OpenGL contexts. */
-    void cleanup();
+    ~EngineContext();
 
-    /** @brief Destructor that calls cleanup(). */
-    ~EngineContext() {cleanup();}
+    /** @brief Calls the object's destructor. */
+    void destruct() { this->~EngineContext(); }
 };
 
 #endif//_ENGINECONTEXT_H

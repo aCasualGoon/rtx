@@ -105,4 +105,4 @@ bool Shader::create(const char *vertexSourceFile, const char *fragmentSourceFile
 
 void Shader::use() { glUseProgram(program); }
 
-void Shader::cleanup() { glDeleteProgram(program); }
+Shader::~Shader() { glDeleteProgram(program); }

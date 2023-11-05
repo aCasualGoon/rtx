@@ -21,10 +21,10 @@ public:
     void use();
 
     /** @brief Cleans up the resources used by this shader program. */
-    void cleanup();
+    ~Shader();
 
-    /** @brief Destructor that calls cleanup(). */
-    ~Shader() {cleanup();}
+    /** @brief Calls the object's destructor. */
+    void destruct() { this->~Shader(); }
 };
 
 #endif//_SHADER_H

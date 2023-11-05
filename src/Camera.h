@@ -55,10 +55,11 @@ public:
     /** @brief Renders the scene from the camera's point of view. */
     void render();
 
-    /** @brief Cleans up the camera resources. */
-    void cleanup();
+    /** @brief Destroys the camera object. */
+    ~Camera();
 
-    ~Camera() {cleanup();}
+    /** @brief Calls the object's destructor. */
+    void destruct() { this->~Camera(); }
 };
 
 #endif//_CAMERA_H

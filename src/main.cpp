@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
         camera.render();
     }
 
-    camera.cleanup();
-    shader.cleanup();
-    context.cleanup();
+    camera.destruct();
+    shader.destruct();
+    context.destruct();
 }
