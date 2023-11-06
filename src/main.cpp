@@ -1,3 +1,7 @@
+#include <memory>
+using std::unique_ptr;
+using std::make_unique;
+using std::move;
 #include "EngineContext.h"
 #include "Shader.h"
 #include "Camera.h"
@@ -12,6 +16,28 @@ constexpr int RENDERER_FLAGS = SDL_RENDERER_ACCELERATED;
 
 constexpr const char *SHADER_SOURCE_VERTEX   = "src/shaders/vertex.glsl";
 constexpr const char *SHADER_SOURCE_FRAGMENT = "src/shaders/fragment.glsl";
+
+struct init_result { 
+    bool success;
+    unique_ptr<EngineContext> context_ptr;
+    unique_ptr<Shader> shader_ptr;
+    unique_ptr<Camera> camera_ptr;
+};
+init_result init() {
+    // initialize EngineContext
+    unique_ptr<EngineContext> context_ptr = make_unique<EngineContext>();
+    if(!context_ptr->create(WINDOW_TITLE, WINDOW_POS_X,WINDOW_POS_Y, WINDOW_SIZE_W,WINDOW_SIZE_H, WINDOW_FLAGS, RENDERER_FLAGS))
+        return {false, nullptr, nullptr, nullptr};
+
+    // initialize shader
+    unique_ptr<Shader> shader_ptr = make_unique<Shader>();
+    if(!shader_ptr->create(SHADER_SOURCE_VERTEX,SHADER_SOURCE_FRAGMENT))
+        return {false, nullptr, nullptr, nullptr};
+
+    unique_ptr<Camera> camera_ptr = make_unique<Camera>(context_ptr.get(), shader_ptr.get());
+
+    return {true, move(context_ptr), move(shader_ptr), move(camera_ptr)};
+}
 
 bool loop(EngineContext *context) {
     SDL_Event *event = &context->event;
@@ -33,24 +59,14 @@ bool loop(EngineContext *context) {
 }
 
 int main(int argc, char *argv[]) {
-    // initialize EngineContext
-    EngineContext context;
-    if(!context.create(WINDOW_TITLE, WINDOW_POS_X,WINDOW_POS_Y, WINDOW_SIZE_W,WINDOW_SIZE_H, WINDOW_FLAGS, RENDERER_FLAGS))
-        return 1;
+    init_result inited = init();
+    if (!inited.success) return 1;
 
-    // initialize shader
-    Shader shader;
-    if(!shader.create(SHADER_SOURCE_VERTEX,SHADER_SOURCE_FRAGMENT))
-        return 1;
-
-    // initialize camera
-    Camera camera(&context, &shader);
+    EngineContext& context = *inited.context_ptr;
+    Shader& shader = *inited.shader_ptr;
+    Camera& camera = *inited.camera_ptr;
 
     while(loop(&context)) {
         camera.render();
     }
-
-    delete &camera;
-    delete &shader;
-    delete &context;
 }
