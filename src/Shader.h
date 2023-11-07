@@ -10,7 +10,7 @@ using namespace glm;
 struct Shader {
 private:
     GLuint program; /** The OpenGL shader program. */
-    std::unordered_map<std::string, GLint> uniform_locations; /** A map of uniform variable names to their locations. */
+    std::unordered_map<const char *, GLint> uniform_locations; /** A map of uniform variable names to their locations. */
     /** @brief Populates the uniform_locations map. */
     void populate_uniform_locations();
 public:
