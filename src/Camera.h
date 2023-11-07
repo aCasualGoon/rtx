@@ -3,23 +3,24 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-using namespace glm;
+#include <glm/gtc/quaternion.hpp>
 #include "EngineContext.h"
 #include "Shader.h"
+using namespace glm;
 
 /**
  * @brief The Camera class represents a camera in the 3D world.
- * 
  * It is responsible for rendering the scene from its point of view.
  */
 class Camera {
 private:
     EngineContext *context;
     Shader *shader;
-    mat4 transform;
-    mat4 view;
+    vec3 position;
+    quat rotation;
     vec2 clip; /** x = near, y = far */
     float fov;
+    float fov_rad;
     GLuint VAO, VBO, EBO;
 public:
     /**
@@ -33,11 +34,36 @@ public:
     vec3 get_position();
     /** @brief Sets the camera's position. @param position The new position. */
     void set_position(vec3 position);
+    /**
+     * @brief Sets the camera's position. 
+     * @param x The new x position.
+     * @param y The new y position.
+     * @param z The new z position. 
+     */
+    inline void set_position(GLfloat x, GLfloat y, GLfloat z) {set_position(vec3(x,y,z));}
+
+    /** @brief Gets the camera's rotation in euler angles. @return The camera's rotation in euler angles. */
+    vec3 get_rotation();
+    /** @brief Sets the camera's rotation in euler angles. @param rotation The new rotation in euler angles. */
+    void set_rotation(vec3 rotation);
+    /** 
+     * @brief Sets the camera's rotation in euler angles. 
+     * @param x The new x rotation.
+     * @param y The new y rotation.
+     * @param z The new z rotation. 
+     */
+    inline void set_rotation(GLfloat x, GLfloat y, GLfloat z) {set_rotation(vec3(x,y,z));}
 
     /** @brief Gets the camera's clipping planes. @return The camera's clipping planes (near, far). */
     vec2 get_clip();
     /** @brief Sets the camera's clipping planes. @param clip The new clipping planes (near, far). */
     void set_clip(vec2 clip);
+    /**
+     * @brief Sets the camera's clipping planes.
+     * @param clip_near The new near clipping plane.
+     * @param clip_far The new far clipping plane.
+     */
+    inline void set_clip(float clip_near, float clip_far) {set_clip(vec2(clip_near,clip_far));}
     /** @brief Gets the camera's near clipping plane. @return The camera's near clipping plane. */
     GLfloat get_clip_near();
     /** @brief Sets the camera's near clipping plane. @param clip_near The new near clipping plane. */
@@ -47,10 +73,31 @@ public:
     /** @brief Sets the camera's far clipping plane. @param clip_far The new far clipping plane. */
     void set_clip_far(float clip_far);
 
-    /** @brief Gets the camera's field of view. @return The camera's field of view. */
+    /** @brief Gets the camera's field of view in degrees. @return The camera's field of view. */
     GLfloat get_fov();
-    /** @brief Sets the camera's field of view. @param fov The new field of view. */
+    /** @brief Sets the camera's field of view in degrees. @param fov The new field of view. */
     void set_fov(float fov);
+
+    /** @brief Moves the camera by the specified delta. @param delta The delta to move by. */
+    void move_by(vec3 delta);
+    /** 
+     * @brief Moves the camera by the specified delta.
+     * @param x The delta to move by on the x axis.
+     * @param y The delta to move by on the y axis.
+     * @param z The delta to move by on the z axis.
+     */
+    inline void move_by(GLfloat dx, GLfloat dy, GLfloat dz) {move_by(vec3(dx,dy,dz));}
+    
+
+    /** @brief Rotates the camera by the specified delta. @param delta The delta in euler angles to rotate by. */
+    void rotate_by(vec3 delta);
+    /** 
+     * @brief Rotates the camera by the specified delta.
+     * @param x The delta to rotate by on the x axis.
+     * @param y The delta to rotate by on the y axis.
+     * @param z The delta to rotate by on the z axis.
+     */
+    inline void rotate_by(GLfloat dx, GLfloat dy, GLfloat dz) {rotate_by(vec3(dx,dy,dz));}
 
     /** @brief Renders the scene from the camera's point of view. */
     void render();

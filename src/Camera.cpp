@@ -1,7 +1,8 @@
 #include "Camera.h"
 #include <iostream>
 #include <GL/glew.h>
-#include <glm/glm.hpp> 
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 using namespace glm;
 
 mat4 matrix_from_posrot(const vec3 position, const vec3 rotation)
@@ -57,18 +58,10 @@ Camera::Camera(EngineContext *context, Shader *shader)
     this->context = context;
     this->shader = shader;
 
-    this->transform = matrix_from_posrot(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f,0.0f,0.0f));
-
-    this->view = mat4(
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    );
-
-    this->clip = vec2(0.0f, 1000.0f);
-
-    this->fov = 90.0f;
+    set_position(0.0f, 0.0f, 0.0f);
+    set_rotation(0.0f, 0.0f, 0.0f);
+    set_clip(0.1f, 1000.0f);
+    set_fov(60.0f);
 
     init_quad_data(this->VAO, this->VBO, this->EBO);
     shader->use();
@@ -76,6 +69,18 @@ Camera::Camera(EngineContext *context, Shader *shader)
 
 void Camera::render()
 {
+    // calculate the cam2world matrix
+    mat4 cam2world = inverse(translate(mat4(1.0f), -this->position) * mat4_cast(conjugate(this->rotation)));
+    // set the cam2world matrix in the shader
+    this->shader->setMatrix("cam2world", cam2world);
+
+    // calculate near clip data (width, height, distance)
+    GLfloat near_clip_width = 2.0f * tan(radians(this->fov / 2.0f)) * this->clip.x;
+    GLfloat near_clip_height = near_clip_width / this->context->get_aspect_ratio();
+    vec3 near_clip_data = vec3(near_clip_width, near_clip_height, this->clip.x);
+    // set the near clip data in the shader
+    this->shader->setFloat3("near_clip_data", near_clip_data);
+    
     // Draw the quad
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -85,9 +90,15 @@ void Camera::render()
 
 // getters & setters
 vec3 Camera::get_position()
-    { return vec3(this->transform[3][0], this->transform[3][1], this->transform[3][2]); }
+    { return this->position; }
 void Camera::set_position(vec3 position)
-    { this->transform[3][0] = position.x; this->transform[3][1] = position.y; this->transform[3][2] = position.z; }
+    { this->position = position; }
+
+vec3 Camera::get_rotation() {
+    return eulerAngles(this->rotation);
+}
+void Camera::set_rotation(vec3 rotation)
+    { this->rotation = quat(rotation); }
 
 vec2 Camera::get_clip()
     { return this->clip; }
@@ -105,7 +116,13 @@ void Camera::set_clip_far(float clip_far)
 GLfloat Camera::get_fov()
     { return this->fov; }
 void Camera::set_fov(float fov)
-    { this->fov = fov; }
+    { this->fov = fov; this->fov_rad = radians(fov); }
+
+void Camera::move_by(vec3 delta)
+    { this->position += delta; }
+
+void Camera::rotate_by(vec3 delta)
+    { this->rotation = quat(delta) * this->rotation; }
 
 Camera::~Camera()
 {

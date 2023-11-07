@@ -23,6 +23,13 @@ struct EngineContext {
      */
     bool create(const char *title, int pos_x, int pos_y, int width, int height, int win_flags, int rnd_flags);
 
+    /**
+     * @brief Gets the aspect ratio of the window.
+     * @return The aspect ratio of the window.
+     * @note The aspect ratio is calculated as width / height.
+     */
+    float get_aspect_ratio();
+
     /** @brief Frees the SDL and OpenGL contexts. */
     ~EngineContext();
 };

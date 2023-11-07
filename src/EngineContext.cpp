@@ -48,6 +48,13 @@ bool EngineContext::create(const char *title, int pos_x, int pos_y, int width, i
     return true;
 }
 
+float EngineContext::get_aspect_ratio()
+{
+    int width, height;
+    SDL_GetWindowSize(window, &width, &height);
+    return (float)width / (float)height;
+}
+
 EngineContext::~EngineContext()
 {
     if(renderer != nullptr)
