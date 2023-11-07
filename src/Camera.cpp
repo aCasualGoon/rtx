@@ -6,9 +6,9 @@ using namespace glm;
 
 mat4 matrix_from_posrot(const vec3 position, const vec3 rotation)
 {
-    float sinX = sin(rotation.x), cosX = cos(rotation.x),
-          sinY = sin(rotation.y), cosY = cos(rotation.y),
-          sinZ = sin(rotation.z), cosZ = cos(rotation.z);
+    GLfloat sinX = sin(rotation.x), cosX = cos(rotation.x),
+            sinY = sin(rotation.y), cosY = cos(rotation.y),
+            sinZ = sin(rotation.z), cosZ = cos(rotation.z);
     return mat4(
         cosY * cosZ                     , -cosY * sinZ                     ,  sinY       ,  0.0f,
         sinX * sinY * cosZ + cosX * sinZ,  cosX * cosZ - sinX * sinY * sinZ, -sinX * cosY,  0.0f,
@@ -93,16 +93,16 @@ vec2 Camera::get_clip()
     { return this->clip; }
 void Camera::set_clip(vec2 clip)
     { this->clip = clip; }
-float Camera::get_clip_near()
+GLfloat Camera::get_clip_near()
     { return this->clip.x; }
 void Camera::set_clip_near(float clip_near)
     { this->clip.x = clip_near; }
-float Camera::get_clip_far()
+GLfloat Camera::get_clip_far()
     { return this->clip.y; }
 void Camera::set_clip_far(float clip_far)
     { this->clip.y = clip_far; }
 
-float Camera::get_fov()
+GLfloat Camera::get_fov()
     { return this->fov; }
 void Camera::set_fov(float fov)
     { this->fov = fov; }

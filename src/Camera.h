@@ -39,16 +39,16 @@ public:
     /** @brief Sets the camera's clipping planes. @param clip The new clipping planes (near, far). */
     void set_clip(vec2 clip);
     /** @brief Gets the camera's near clipping plane. @return The camera's near clipping plane. */
-    float get_clip_near();
+    GLfloat get_clip_near();
     /** @brief Sets the camera's near clipping plane. @param clip_near The new near clipping plane. */
     void set_clip_near(float clip_near);
     /** @brief Gets the camera's far clipping plane. @return The camera's far clipping plane. */
-    float get_clip_far();
+    GLfloat get_clip_far();
     /** @brief Sets the camera's far clipping plane. @param clip_far The new far clipping plane. */
     void set_clip_far(float clip_far);
 
     /** @brief Gets the camera's field of view. @return The camera's field of view. */
-    float get_fov();
+    GLfloat get_fov();
     /** @brief Sets the camera's field of view. @param fov The new field of view. */
     void set_fov(float fov);
 
