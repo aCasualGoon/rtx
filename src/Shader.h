@@ -76,6 +76,12 @@ public:
      * @param value2 The second value to set.
      */
     void setFloat2(const char *name, GLfloat value1, GLfloat value2);
+    /**
+     * @brief Sets two uniform double (glsl:dvec2) values in this shader program.
+     * @param name The name of the uniform variable.
+     * @param value The value to set.
+    */
+    void setFloat2(const char *name, const vec2 &value);
 
     /**
      * @brief Sets two uniform double (glsl:dvec2) values in this shader program.
@@ -111,6 +117,12 @@ public:
      * @param value3 The third value to set.
      */
     void setFloat3(const char *name, GLfloat value1, GLfloat value2, GLfloat value3);
+    /**
+     * @brief Sets three uniform float (glsl:vec3) values in this shader program.
+     * @param name The name of the uniform variable.
+     * @param value The value to set.
+     */
+    void setFloat3(const char *name, const vec3 &value);
 
     /**
      * @brief Sets three uniform double (glsl:dvec3) values in this shader program.
@@ -150,6 +162,12 @@ public:
      * @param value4 The fourth value to set.
      */
     void setFloat4(const char *name, GLfloat value1, GLfloat value2, GLfloat value3, GLfloat value4);
+    /**
+     * @brief Sets four uniform float (glsl:vec4) values in this shader program.
+     * @param name The name of the uniform variable.
+     * @param value The value to set.
+     */
+    void setFloat4(const char *name, const vec4 &value);
 
     /**
      * @brief Sets four uniform double (glsl:dvec4) values in this shader program.
