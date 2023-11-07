@@ -26,18 +26,6 @@ const char* read_file(const char* filename)
     return data;
 }
 
-void Shader::populate_uniform_locations() {
-    GLuint num_uniforms;
-    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, (GLint*)&num_uniforms);
-    for (GLuint i = 0; i < num_uniforms; i++) {
-        GLint size;
-        GLenum type;
-        char name[256];
-        glGetActiveUniform(program, i, 256, NULL, &size, &type, name);
-        uniform_locations[name] = glGetUniformLocation(program, name);
-    }
-}
-
 bool Shader::create(const char *vertexSourceFile, const char *fragmentSourceFile)
 {
     const char *vertexSource = read_file(vertexSourceFile);
@@ -116,7 +104,15 @@ bool Shader::create(const char *vertexSourceFile, const char *fragmentSourceFile
     glDeleteShader(fragmentShader);
 
     // Populate the uniform_locations map for faster access to uniform variables
-    populate_uniform_locations();
+    GLuint num_uniforms;
+    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, (GLint*)&num_uniforms);
+    for (GLuint i = 0; i < num_uniforms; i++) {
+        GLint size;
+        GLenum type;
+        char name[256];
+        glGetActiveUniform(program, i, 256, NULL, &size, &type, name);
+        uniform_locations[name] = glGetUniformLocation(program, name);
+    }
 
     return true;
 }
