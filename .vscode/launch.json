@@ -5,7 +5,7 @@
             "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/main",
+            "program": "${workspaceFolder}/build/bin/rtx",
             "preLaunchTask": "build",
             "miDebuggerPath": "/usr/bin/gdb",
             "cwd": "${workspaceFolder}",

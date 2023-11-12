@@ -1,47 +1,53 @@
-# Specify the libraries to link
-LNK = -lSDL2 -lGL -lGLEW
+# Makefile configuration
+CC := g++
+CFLAGS := -Wall -g
+# INCLUDES := 
+# LDFLAGS := 
+LDLIBS := -lSDL2 -lGL -lGLEW
+SRC_DIR := src
+BUILD_DIR := build
+OBJ_DIR := $(BUILD_DIR)/obj
+BIN_DIR := $(BUILD_DIR)/bin
+TARGET := $(BIN_DIR)/rtx
 
-# Specify the compiler
-CXX = g++
+# Automatically find all .cpp files in SRC_DIR and its subdirectories
+SOURCES := $(shell find $(SRC_DIR) -name '*.cpp')
+# Replace .cpp from SOURCES with .o and change SRC_DIR to OBJ_DIR
+OBJECTS := $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
-# Specify the root directory of the source files
-SRC_DIR = ./src
+# Verbose control
+VERBOSE := 0
+ifeq ($(VERBOSE),0)
+  Q := @
+else
+  Q :=
+endif
 
-# Specify additional compilation flags (e.g., -Wall for warnings, -g for debug info)
-CXXFLAGS = -Wall -g $(LNK)
+# Default target
+all: $(TARGET)
 
-# Find all .cpp files in the SRC_DIR
-SOURCES = $(shell find $(SRC_DIR) -name '*.cpp')
-
-# Object files are generated in the build/obj directory
-OBJ_DIR = ./build/obj
-OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SOURCES))
-
-# Name of the final executable
-TARGET = build/bin/main
-
-# Rule to link all object files to the final executable
+# Link the executable
 $(TARGET): $(OBJECTS)
-	@mkdir -p $(dir $(TARGET))
-	@$(CXX) $(CXXFLAGS) -o $@ $^
+	$(Q)mkdir -p $(BIN_DIR)
+	$(Q)$(CC) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
-# Rule to compile each source file into an object file
+# Compile the source files into object files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(dir $@)
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(Q)mkdir -p $(@D)
+	$(Q)$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# Rule to run the compiled executable
-run: $(TARGET)
-	@./$(TARGET)
-
-# Rule to clean all generated object files and the executable
+# Clean up, removing only object files and keeping the executable
 clean:
-	@rm -rf build
+	$(Q)find $(OBJ_DIR) -type f -name '*.o' -delete
+	$(Q)find $(OBJ_DIR) -type d -empty -delete
 
-# Rule to keep the object files and build the executable
-keep_obj: $(OBJECTS)
-	@mkdir -p $(dir $(TARGET))
-	@$(CXX) $(CXXFLAGS) -o $(TARGET) $^
+# Build and then clean up, but keep the executable
+cleanbuild: all
+	$(Q)$(MAKE) clean
 
-# .PHONY tells make that run, clean, and keep_obj are not files
-.PHONY: run clean keep_obj
+.PHONY: all clean cleanbuild run cleanrun
+
+# make 			  : build the executable
+# make clean 	  : remove all object files
+# make cleanbuild : build the executable and then remove all object files
+# all options are available with VERBOSE=1, e.g., VERBOSE=1 make cleanrun
