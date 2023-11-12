@@ -5,6 +5,7 @@ using std::move;
 #include "EngineContext.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "editor/Editor.h"
 
 constexpr const char *WINDOW_TITLE = "Shaded Window. Exciting stuff!";
 constexpr int WINDOW_POS_X   = 100;
@@ -66,7 +67,10 @@ int main(int argc, char *argv[]) {
     Shader& shader = *inited.shader_ptr;
     Camera& camera = *inited.camera_ptr;
 
+    Editor editor(context);
+
     while(loop(&context)) {
         camera.render();
+        editor.Tick();
     }
 }
