@@ -11,21 +11,23 @@ SRC_DIR = ./src
 CXXFLAGS = -Wall -g $(LNK)
 
 # Find all .cpp files in the SRC_DIR
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
+SOURCES = $(shell find $(SRC_DIR) -name '*.cpp')
 
-# Object files are generated in the same directory as their corresponding source files
-OBJECTS = $(SOURCES:.cpp=.o)
+# Object files are generated in the build/obj directory
+OBJ_DIR = ./build/obj
+OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SOURCES))
 
 # Name of the final executable
-TARGET = bin/main
+TARGET = build/bin/main
 
 # Rule to link all object files to the final executable
 $(TARGET): $(OBJECTS)
+	@mkdir -p $(dir $(TARGET))
 	@$(CXX) $(CXXFLAGS) -o $@ $^
-	@rm $(OBJECTS)
 
 # Rule to compile each source file into an object file
-$(SRC_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Rule to run the compiled executable
@@ -34,10 +36,11 @@ run: $(TARGET)
 
 # Rule to clean all generated object files and the executable
 clean:
-	@rm -f $(OBJECTS) $(TARGET)
+	@rm -rf build
 
 # Rule to keep the object files and build the executable
 keep_obj: $(OBJECTS)
+	@mkdir -p $(dir $(TARGET))
 	@$(CXX) $(CXXFLAGS) -o $(TARGET) $^
 
 # .PHONY tells make that run, clean, and keep_obj are not files
