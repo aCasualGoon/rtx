@@ -67,10 +67,7 @@ int main(int argc, char *argv[]) {
     Shader& shader = *inited.shader_ptr;
     Camera& camera = *inited.camera_ptr;
 
-    Editor editor(context);
-
     while(loop(&context)) {
         camera.render();
-        editor.Tick();
     }
 }
