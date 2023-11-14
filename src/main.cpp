@@ -40,7 +40,7 @@ init_result init() {
     return {true, move(context_ptr), move(shader_ptr), move(camera_ptr)};
 }
 
-bool loop(EngineContext *context) {
+bool loop(EngineContext *context, float delta_time) {
     SDL_Event *event = &context->event;
     bool running = true;
     while (SDL_PollEvent(event)) {
@@ -67,7 +67,14 @@ int main(int argc, char *argv[]) {
     Shader& shader = *inited.shader_ptr;
     Camera& camera = *inited.camera_ptr;
 
-    while(loop(&context)) {
+    uint64 last_frame_time = SDL_GetTicks64();
+
+    bool running = true;
+    while(running) {
+        // running = loop(&context);
+        float current_frame_time = SDL_GetTicks64();
+        running = loop(&context, current_frame_time - last_frame_time);
         camera.render();
+        last_frame_time = current_frame_time;
     }
 }
