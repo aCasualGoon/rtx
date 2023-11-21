@@ -8,8 +8,8 @@ using namespace glm;
 
 /** @brief A struct representing a shader program. */
 struct Shader {
-private:
     GLuint program; /** The OpenGL shader program. */
+private:
     std::unordered_map<const char*, GLint> uniform_locations; /** A map of uniform variable names to their locations. */
 public:
     /**

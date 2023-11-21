@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
 mat4 matrix_from_posrot(const vec3 position, const vec3 rotation)
@@ -72,7 +73,11 @@ void Camera::render()
     // calculate the cam2world matrix
     mat4 cam2world = inverse(translate(mat4(1.0f), -this->position) * mat4_cast(conjugate(this->rotation)));
     // set the cam2world matrix in the shader
-    this->shader->setMatrix("cam2world", cam2world);
+    // this->shader->setMatrix("cam2world", cam2world);
+    mat4 mat = mat4(1.0f);
+    GLint matloc = glGetUniformLocation(this->shader->program,"cam2world");
+    glUniformMatrix4fv(matloc,1,GL_FALSE,value_ptr(mat));
+
 
     // calculate near clip data (width, height, distance)
     GLfloat near_clip_width = 2.0f * tan(radians(this->fov / 2.0f)) * this->clip.x;
@@ -88,7 +93,6 @@ void Camera::render()
     SDL_GL_SwapWindow(context->window);
 }
 
-// getters & setters
 vec3 Camera::get_position()
     { return this->position; }
 void Camera::set_position(vec3 position)
