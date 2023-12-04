@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
 const char* read_file(const char* filename)
@@ -142,14 +143,14 @@ void Shader::setFloat4 (const char *name, GLfloat x,GLfloat y,GLfloat z,GLfloat 
 void Shader::setFloat4 (const char *name, const vec4 &v )                              { glUniform4f (uniform_locations[name], v.x, v.y, v.z, v.w); }
 void Shader::setDouble4(const char *name, GLdouble x,GLdouble y,GLdouble z,GLdouble w) { glUniform4d (uniform_locations[name], x, y, z, w); }
 
-void Shader::setMatrix (const char *name, const mat2x2 &m) { glUniformMatrix2fv  (uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
-void Shader::setMatrix (const char *name, const mat2x3 &m) { glUniformMatrix2x3fv(uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
-void Shader::setMatrix (const char *name, const mat2x4 &m) { glUniformMatrix2x4fv(uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
-void Shader::setMatrix (const char *name, const mat3x2 &m) { glUniformMatrix3x2fv(uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
-void Shader::setMatrix (const char *name, const mat3x3 &m) { glUniformMatrix3fv  (uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
-void Shader::setMatrix (const char *name, const mat3x4 &m) { glUniformMatrix3x4fv(uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
-void Shader::setMatrix (const char *name, const mat4x2 &m) { glUniformMatrix4x2fv(uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
-void Shader::setMatrix (const char *name, const mat4x3 &m) { glUniformMatrix4x3fv(uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
-void Shader::setMatrix (const char *name, const mat4x4 &m) { glUniformMatrix4fv  (uniform_locations[name], 1, GL_FALSE, &m[0][0]); }
+void Shader::setMatrix (const char *name, const mat2x2 &m) { glUniformMatrix2fv  (uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
+void Shader::setMatrix (const char *name, const mat2x3 &m) { glUniformMatrix2x3fv(uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
+void Shader::setMatrix (const char *name, const mat2x4 &m) { glUniformMatrix2x4fv(uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
+void Shader::setMatrix (const char *name, const mat3x2 &m) { glUniformMatrix3x2fv(uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
+void Shader::setMatrix (const char *name, const mat3x3 &m) { glUniformMatrix3fv  (uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
+void Shader::setMatrix (const char *name, const mat3x4 &m) { glUniformMatrix3x4fv(uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
+void Shader::setMatrix (const char *name, const mat4x2 &m) { glUniformMatrix4x2fv(uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
+void Shader::setMatrix (const char *name, const mat4x3 &m) { glUniformMatrix4x3fv(uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
+void Shader::setMatrix (const char *name, const mat4x4 &m) { glUniformMatrix4fv  (uniform_locations[name], 1, GL_FALSE, value_ptr(m)); }
 
 Shader::~Shader() { glDeleteProgram(program); }

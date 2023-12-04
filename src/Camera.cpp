@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
 mat4 matrix_from_posrot(const vec3 position, const vec3 rotation)
@@ -70,14 +71,23 @@ Camera::Camera(EngineContext *context, Shader *shader)
 void Camera::render()
 {
     // calculate the cam2world matrix
-    mat4 cam2world = inverse(translate(mat4(1.0f), -this->position) * mat4_cast(conjugate(this->rotation)));
+    // mat4 cam2world = inverse(translate(mat4(1.0f), -this->position) * mat4_cast(conjugate(this->rotation)));
+    mat4 cam2world = mat4(
+        // random matrix
+        0.5f, 0.2f, 0.3f, 0.7f,
+        0.1f, 0.9f, 0.4f, 0.2f,
+        0.3f, 0.4f, 0.5f, 0.1f,
+        0.2f, 0.8f, 0.7f, 0.6f
+    );
     // set the cam2world matrix in the shader
-    this->shader->setMatrix("cam2world", cam2world);
+    // this->shader->setMatrix("cam2world", cam2world);
+    glUniformMatrix4fv(glGetUniformLocation(this->shader->program, "cam2world"), 1, GL_FALSE, value_ptr(cam2world));
 
     // calculate near clip data (width, height, distance)
     GLfloat near_clip_width = 2.0f * tan(radians(this->fov / 2.0f)) * this->clip.x;
     GLfloat near_clip_height = near_clip_width / this->context->get_aspect_ratio();
     vec3 near_clip_data = vec3(near_clip_width, near_clip_height, this->clip.x);
+    near_clip_data = vec3(1.0);
     // set the near clip data in the shader
     this->shader->setFloat3("near_clip_data", near_clip_data);
     

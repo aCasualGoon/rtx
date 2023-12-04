@@ -9,9 +9,9 @@ using namespace glm;
 /** @brief A struct representing a shader program. */
 struct Shader {
 private:
-    GLuint program; /** The OpenGL shader program. */
-    std::unordered_map<const char*, GLint> uniform_locations; /** A map of uniform variable names to their locations. */
 public:
+    std::unordered_map<const char*, GLint> uniform_locations; /** A map of uniform variable names to their locations. */
+    GLuint program; /** The OpenGL shader program. */
     /**
      * @brief Creates a shader program from the given vertex and fragment source code files.
      * @param vertexSource The source code file for the vertex shader.
