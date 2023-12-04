@@ -98,7 +98,6 @@ void Camera::render()
     SDL_GL_SwapWindow(context->window);
 }
 
-// getters & setters
 vec3 Camera::get_position()
     { return this->position; }
 void Camera::set_position(vec3 position)

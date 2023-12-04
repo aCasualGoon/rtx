@@ -105,13 +105,14 @@ bool Shader::create(const char *vertexSourceFile, const char *fragmentSourceFile
     glDeleteShader(fragmentShader);
 
     // Populate the uniform_locations map for faster access to uniform variables
-    GLuint num_uniforms;
-    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, (GLint*)&num_uniforms);
+    GLint num_uniforms;
+    glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &num_uniforms);
     for (GLuint i = 0; i < num_uniforms; i++) {
         GLint size;
         GLenum type;
         char name[256];
         glGetActiveUniform(program, i, 256, NULL, &size, &type, name);
+        GLint uniloc = glGetUniformLocation(program, name);
         uniform_locations[name] = glGetUniformLocation(program, name);
     }
 
