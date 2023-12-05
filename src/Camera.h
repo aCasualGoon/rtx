@@ -17,12 +17,14 @@ private:
     EngineContext *context;
     Shader *shader;
     vec3 position;
+    vec2 angular_rotation; // rotation as (pitch,yaw) / (along local x axis, along y axis) in degrees [-180,180].
     quat rotation;
     vec2 clip; /** x = near, y = far */
     float fov;
     float fov_rad;
     GLuint VAO, VBO, EBO;
 public:
+    Camera();
     /**
      * @brief Constructs a new Camera object.
      * @param context The engine context.
@@ -42,17 +44,16 @@ public:
      */
     inline void set_position(GLfloat x, GLfloat y, GLfloat z) {set_position(vec3(x,y,z));}
 
-    /** @brief Gets the camera's rotation in euler angles. @return The camera's rotation in euler angles. */
-    vec3 get_rotation();
-    /** @brief Sets the camera's rotation in euler angles. @param rotation The new rotation in euler angles. */
-    void set_rotation(vec3 rotation);
+    /** @brief Gets the camera's rotation as (pitch,yaw) in degrees. @return The camera's rotation as (pitch,yaw) in degrees [-180,180]. */
+    vec2 get_rotation();
     /** 
-     * @brief Sets the camera's rotation in euler angles. 
-     * @param x The new x rotation.
-     * @param y The new y rotation.
-     * @param z The new z rotation. 
+     * @brief Sets the camera's rotation as (pitch,yaw) in degrees. 
+     * @param pitch The rotation along the local x axis in degrees.
+     * @param yaw The rotation along the y axis in degrees.
      */
-    inline void set_rotation(GLfloat x, GLfloat y, GLfloat z) {set_rotation(vec3(x,y,z));}
+    void set_rotation(GLfloat pitch, GLfloat yaw);
+    /** @brief Sets the camera's rotation as (pitch,yaw) in degrees. @param rotation The new rotation as (pitch,yaw) in degrees [-180,180]. */
+    inline void set_rotation(vec2 rotation) { set_rotation(rotation.x,rotation.y); }
 
     /** @brief Gets the camera's clipping planes. @return The camera's clipping planes (near, far). */
     vec2 get_clip();
@@ -89,15 +90,31 @@ public:
     inline void move_by(GLfloat dx, GLfloat dy, GLfloat dz) {move_by(vec3(dx,dy,dz));}
     
 
-    /** @brief Rotates the camera by the specified delta. @param delta The delta in euler angles to rotate by. */
-    void rotate_by(vec3 delta);
+    /** @brief Rotates the camera by the specified delta. @param delta The delta as (pitch,yaw) in degrees [-180,180]. */
+    void rotate_by(vec2 delta);
     /** 
      * @brief Rotates the camera by the specified delta.
-     * @param x The delta to rotate by on the x axis.
-     * @param y The delta to rotate by on the y axis.
-     * @param z The delta to rotate by on the z axis.
+     * @param dpitch The delta to rotate by on the local x axis in degrees [-180,180].
+     * @param dyaw The delta to rotate by on the y axis in degrees [-180,180].
      */
-    inline void rotate_by(GLfloat dx, GLfloat dy, GLfloat dz) {rotate_by(vec3(dx,dy,dz));}
+    inline void rotate_by(GLfloat dpitch, GLfloat dyaw) {rotate_by(vec2(dpitch,dyaw));}
+    
+    /** 
+     * @brief Rotates the camera by the specified delta, clamping it vertically to [-90,+90].
+     * @param dpitch The delta to rotate by on the local x axis in degrees [-180,180].
+     * @param dyaw The delta to rotate by on the y axis in degrees [-180,180].
+     */
+    void rotate_by_clamped(GLfloat dpitch, GLfloat dyaw);
+    /** @brief Rotates the camera by the specified delta, clamping it vertically to [-90,+90]. @param delta The delta as (pitch,yaw) in degrees [-180,180]. */
+    inline void rotate_by_clamped(vec2 delta) { rotate_by_clamped(delta.x, delta.y); }
+    /** 
+     * @brief Rotates the camera by the specified delta, clamping it vertically to [min,max].
+     * @param dpitch The delta to rotate by on the local x axis in degrees [-180,180].
+     * @param dyaw The delta to rotate by on the y axis in degrees [-180,180].
+     */
+    void rotate_by_clamped(GLfloat dpitch, GLfloat dyaw, GLfloat min, GLfloat max);
+    /** @brief Rotates the camera by the specified delta, clamping it vertically to [min,max]. @param delta The delta as (pitch,yaw) in degrees [-180,180]. */
+    inline void rotate_by_clamped(vec2 delta, GLfloat min, GLfloat max) { rotate_by_clamped(delta.x, delta.y, min, max); }
 
     /** @brief Renders the scene from the camera's point of view. */
     void render();

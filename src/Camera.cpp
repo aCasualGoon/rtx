@@ -54,13 +54,14 @@ void init_quad_data(GLuint &VAO, GLuint &VBO, GLuint &EBO)
     glEnableVertexAttribArray(1);
 }
 
+Camera::Camera(){}
 Camera::Camera(EngineContext *context, Shader *shader)
 {
     this->context = context;
     this->shader = shader;
 
     set_position(0.0f, 0.0f, 0.0f);
-    set_rotation(0.0f, 0.0f, 0.0f);
+    set_rotation(0.0f, 0.0f);
     set_clip(0.1f, 1000.0f);
     set_fov(60.0f);
 
@@ -71,14 +72,7 @@ Camera::Camera(EngineContext *context, Shader *shader)
 void Camera::render()
 {
     // calculate the cam2world matrix
-    // mat4 cam2world = inverse(translate(mat4(1.0f), -this->position) * mat4_cast(conjugate(this->rotation)));
-    mat4 cam2world = mat4(
-        // random matrix
-        0.5f, 0.2f, 0.3f, 0.7f,
-        0.1f, 0.9f, 0.4f, 0.2f,
-        0.3f, 0.4f, 0.5f, 0.1f,
-        0.2f, 0.8f, 0.7f, 0.6f
-    );
+    mat4 cam2world = inverse(translate(mat4(1.0f), -this->position) * mat4_cast(conjugate(this->rotation)));
     // set the cam2world matrix in the shader
     // this->shader->setMatrix("cam2world", cam2world);
     glUniformMatrix4fv(glGetUniformLocation(this->shader->program, "cam2world"), 1, GL_FALSE, value_ptr(cam2world));
@@ -103,11 +97,19 @@ vec3 Camera::get_position()
 void Camera::set_position(vec3 position)
     { this->position = position; }
 
-vec3 Camera::get_rotation() {
-    return eulerAngles(this->rotation);
+vec2 Camera::get_rotation()
+{ return angular_rotation; }
+
+GLfloat to_anglerange(GLfloat angle) { 
+    angle = mod(angle,360.0f);
+    return (abs(angle) > 180) * sign(angle) * -360 + angle;
 }
-void Camera::set_rotation(vec3 rotation)
-    { this->rotation = quat(rotation); }
+void Camera::set_rotation(GLfloat pitch, GLfloat yaw) {
+    angular_rotation = vec2(to_anglerange(pitch), to_anglerange(yaw));
+    rotation = 
+        angleAxis(radians(angular_rotation.y), vec3(0,1,0)) // yaw
+      * angleAxis(radians(angular_rotation.x), vec3(1,0,0));// pitch
+}
 
 vec2 Camera::get_clip()
     { return this->clip; }
@@ -130,8 +132,13 @@ void Camera::set_fov(float fov)
 void Camera::move_by(vec3 delta)
     { this->position += delta; }
 
-void Camera::rotate_by(vec3 delta)
-    { this->rotation = quat(delta) * this->rotation; }
+void Camera::rotate_by(vec2 delta)
+    { set_rotation(get_rotation() + delta); }
+
+void Camera::rotate_by_clamped(GLfloat dpitch, GLfloat dyaw) 
+    { set_rotation(clamp(angular_rotation.x + dpitch, -90.0f, 90.0f), angular_rotation.y + dyaw); }
+void Camera::rotate_by_clamped(GLfloat dpitch, GLfloat dyaw, GLfloat min, GLfloat max) 
+    { set_rotation(clamp(angular_rotation.x + dpitch, min, max), angular_rotation.y + dyaw); }
 
 Camera::~Camera()
 {

@@ -1,11 +1,10 @@
-#include <memory>
-using std::unique_ptr;
-using std::make_unique;
-using std::move;
 #include "EngineContext.h"
 #include "Shader.h"
 #include "Camera.h"
-#include "editor/Editor.h"
+#include <memory>
+#include <list>
+using std::unique_ptr, std::make_unique, std::move;
+using std::list;
 
 constexpr const char *WINDOW_TITLE = "Shaded Window. Exciting stuff!";
 constexpr int WINDOW_POS_X   = 100;
@@ -18,6 +17,9 @@ constexpr int RENDERER_FLAGS = SDL_RENDERER_ACCELERATED;
 constexpr const char *SHADER_SOURCE_VERTEX   = "src/shaders/vertex.glsl";
 constexpr const char *SHADER_SOURCE_FRAGMENT = "src/shaders/fragment.glsl";
 
+EngineContext context;
+Shader shader;
+Camera camera;
 struct init_result { 
     bool success;
     unique_ptr<EngineContext> context_ptr;
@@ -40,6 +42,8 @@ init_result init() {
     return {true, move(context_ptr), move(shader_ptr), move(camera_ptr)};
 }
 
+const Uint8 *keyboard_state = SDL_GetKeyboardState(NULL);
+#define isKeyDown(KEY) keyboard_state[KEY]
 bool loop(EngineContext *context, float delta_time) {
     SDL_Event *event = &context->event;
     bool running = true;
@@ -55,6 +59,17 @@ bool loop(EngineContext *context, float delta_time) {
 
             default:break;
         }
+
+        GLfloat dpitch = 0, dyaw = 0;
+        if(isKeyDown(SDL_SCANCODE_UP))
+            dpitch -= 10;
+        if(isKeyDown(SDL_SCANCODE_DOWN))
+            dpitch += 10;
+        if(isKeyDown(SDL_SCANCODE_RIGHT))
+            dyaw += 10;
+        if(isKeyDown(SDL_SCANCODE_LEFT))
+            dyaw -= 10;
+        camera.rotate_by_clamped(dpitch,dyaw);
     }
     return running;
 }
@@ -63,9 +78,9 @@ int main(int argc, char *argv[]) {
     init_result inited = init();
     if (!inited.success) return 1;
 
-    EngineContext& context = *inited.context_ptr;
-    Shader& shader = *inited.shader_ptr;
-    Camera& camera = *inited.camera_ptr;
+    context = *inited.context_ptr;
+    shader = *inited.shader_ptr;
+    camera = *inited.camera_ptr;
 
     uint64 last_frame_time = SDL_GetTicks64();
 
