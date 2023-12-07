@@ -81,7 +81,7 @@ void Camera::render()
     GLfloat near_clip_width = 2.0f * tan(radians(this->fov / 2.0f)) * this->clip.x;
     GLfloat near_clip_height = near_clip_width / this->context->get_aspect_ratio();
     vec3 near_clip_data = vec3(near_clip_width, near_clip_height, this->clip.x);
-    near_clip_data = vec3(1.0);
+    // near_clip_data = vec3(1.0);
     // set the near clip data in the shader
     this->shader->setFloat3("near_clip_data", near_clip_data);
     
@@ -131,6 +131,10 @@ void Camera::set_fov(float fov)
 
 void Camera::move_by(vec3 delta)
     { this->position += delta; }
+
+// void Camera::move_by_locally(vec3 delta) {
+    
+// }
 
 void Camera::rotate_by(vec2 delta)
     { set_rotation(get_rotation() + delta); }
