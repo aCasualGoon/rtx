@@ -63,33 +63,16 @@ bool loop(EngineContext *context, float delta_time) {
 
     }
 
-    GLfloat dpitch = getAxis(SDL_SCANCODE_DOWN,SDL_SCANCODE_UP) * 0.1;
-    GLfloat dyaw = -getAxis(SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT) * 0.1;
+    GLfloat dpitch = -getAxis(SDL_SCANCODE_DOWN,SDL_SCANCODE_UP) * 0.1;
+    GLfloat dyaw = getAxis(SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT) * 0.1;
     camera.rotate_by_clamped(dpitch,dyaw);
-
-    // vec3 dmove = vec3(0);
-    // if(isKeyDown(SDL_SCANCODE_W))
-    //     dmove.z += 0.005;
-    // if(isKeyDown(SDL_SCANCODE_S))
-    //     dmove.z -= 0.005;
-    // if(isKeyDown(SDL_SCANCODE_D))
-    //     dmove.x += 0.005;
-    // if(isKeyDown(SDL_SCANCODE_A))
-    //     dmove.x -= 0.005;
-    // if(isKeyDown(SDL_SCANCODE_SPACE))
-    //     dmove.y += 0.005;
-    // if(isKeyDown(SDL_SCANCODE_LSHIFT))
-    //     dmove.y -= 0.005;
-    // if(length(dmove) != 0)
-    //     dmove = normalize(dmove);
-    // camera.move_by(dmove);
 
     int8_t dx = getAxis(SDL_SCANCODE_A,SDL_SCANCODE_D);
     int8_t dy = getAxis(SDL_SCANCODE_LSHIFT,SDL_SCANCODE_SPACE);
     int8_t dz = getAxis(SDL_SCANCODE_S,SDL_SCANCODE_W);
     vec3 dmove = vec3(dx,dy,dz);
-    // if(!((dx&dy) | (dx&dz) | (dy&dz))) //maximum 1 component is != 0
-    //     dmove = normalize(dmove);
+    if(length(dmove) > 1)
+        dmove = normalize(dmove);
     camera.move_by(dmove * 0.005f);
 
     return running;
