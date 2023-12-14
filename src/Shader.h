@@ -1,5 +1,5 @@
-#ifndef _SHADER_H
-#define _SHADER_H
+#ifndef _SHADER_H_
+#define _SHADER_H_
 
 #include <unordered_map>
 #include <GL/glew.h>
@@ -244,4 +244,4 @@ public:
     ~Shader();
 };
 
-#endif//_SHADER_H
+#endif//_SHADER_H_

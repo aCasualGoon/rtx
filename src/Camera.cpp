@@ -6,19 +6,6 @@
 #include <glm/gtc/type_ptr.hpp>
 using namespace glm;
 
-mat4 matrix_from_posrot(const vec3 position, const vec3 rotation)
-{
-    GLfloat sinX = sin(rotation.x), cosX = cos(rotation.x),
-            sinY = sin(rotation.y), cosY = cos(rotation.y),
-            sinZ = sin(rotation.z), cosZ = cos(rotation.z);
-    return mat4(
-        cosY * cosZ                     , -cosY * sinZ                     ,  sinY       ,  0.0f,
-        sinX * sinY * cosZ + cosX * sinZ,  cosX * cosZ - sinX * sinY * sinZ, -sinX * cosY,  0.0f,
-        sinX * sinZ - cosX * sinY * cosZ,  cosX * sinY * sinZ + sinX * cosZ,  cosX * cosY,  0.0f,
-        position.x                      ,  position.y                      ,  position.z ,  1.0f
-    );
-}
-
 const GLfloat vertices[20] = {
 //    X      Y     Z     U     V
     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // Bottom left corner
@@ -60,7 +47,7 @@ Camera::Camera(EngineContext *context, Shader *shader)
     this->context = context;
     this->shader = shader;
 
-    set_position(0.0f, 0.0f, 0.0f);
+    set_position(0.0f, 0.0f, -5.0f);
     set_rotation(0.0f, 0.0f);
     set_clip(0.1f, 1000.0f);
     set_fov(60.0f);
@@ -72,7 +59,7 @@ Camera::Camera(EngineContext *context, Shader *shader)
 void Camera::render()
 {
     // calculate the cam2world matrix
-    mat4 cam2world = inverse(translate(mat4(1.0f), -this->position) * mat4_cast(conjugate(this->rotation)));
+    mat4 cam2world = inverse(mat4_cast(conjugate(this->rotation)) * translate(mat4(1.0f), -this->position));
     // set the cam2world matrix in the shader
     // this->shader->setMatrix("cam2world", cam2world);
     glUniformMatrix4fv(glGetUniformLocation(this->shader->program, "cam2world"), 1, GL_FALSE, value_ptr(cam2world));
@@ -100,15 +87,25 @@ void Camera::set_position(vec3 position)
 vec2 Camera::get_rotation()
 { return angular_rotation; }
 
-GLfloat to_anglerange(GLfloat angle) { 
-    angle = mod(angle,360.0f);
-    return (abs(angle) > 180) * sign(angle) * -360 + angle;
-}
 void Camera::set_rotation(GLfloat pitch, GLfloat yaw) {
-    angular_rotation = vec2(to_anglerange(pitch), to_anglerange(yaw));
-    rotation = 
-        angleAxis(radians(angular_rotation.y), vec3(0,1,0)) // yaw
-      * angleAxis(radians(angular_rotation.x), vec3(1,0,0));// pitch
+    // Clamp and normalize yaw
+    yaw = fmod(yaw + 180.0f, 360.0f);
+    if (yaw < 0) yaw += 360.0f;
+    yaw -= 180.0f;
+
+    // Convert to radians
+    GLfloat pitchRad = glm::radians(pitch);
+    GLfloat yawRad = glm::radians(yaw);
+
+    // Create quaternions
+    glm::quat pitchQuat = glm::angleAxis(pitchRad, glm::vec3(1, 0, 0));
+    glm::quat yawQuat = glm::angleAxis(yawRad, glm::vec3(0, 1, 0));
+
+    // Combine quaternions
+    rotation = yawQuat * pitchQuat;
+
+    // Store the rotation in euler angles
+    angular_rotation = vec2(pitch, yaw);
 }
 
 vec2 Camera::get_clip()
@@ -132,9 +129,8 @@ void Camera::set_fov(float fov)
 void Camera::move_by(vec3 delta)
     { this->position += delta; }
 
-// void Camera::move_by_locally(vec3 delta) {
-    
-// }
+void Camera::move_by_local(vec3 delta) 
+    { move_by(mat4_cast(this->rotation) * vec4(delta, 1.0f)); }
 
 void Camera::rotate_by(vec2 delta)
     { set_rotation(get_rotation() + delta); }

@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "Includer.h"
 #include <iostream>
 #include <unordered_map>
 #include <GL/glew.h>
@@ -47,6 +48,22 @@ bool Shader::create(const char *vertexSourceFile, const char *fragmentSourceFile
     // Create the shaders
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    // parse the files for #include directives
+    // vertexSource = Includer::parse(vertexSourceFile);
+    // fragmentSource = Includer::parse(fragmentSourceFile);
+
+    // check for include errors
+    if (strstr(vertexSource, "SHADER_INCLUDE_ERROR") != NULL)
+    {
+        fprintf(stderr, "Error parsing vertex shader source file %s\n", vertexSourceFile);
+        return false;
+    }
+    if (strstr(fragmentSource, "SHADER_INCLUDE_ERROR") != NULL)
+    {
+        fprintf(stderr, "Error parsing fragment shader source file %s\n", fragmentSourceFile);
+        return false;
+    }
 
     // Load the source code into the shaders
     glShaderSource(vertexShader, 1, &vertexSource, NULL);

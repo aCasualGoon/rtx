@@ -1,5 +1,5 @@
-#ifndef _ENGINECONTEXT_H
-#define _ENGINECONTEXT_H
+#ifndef _ENGINECONTEXT_H_
+#define _ENGINECONTEXT_H_
 
 #include <SDL2/SDL.h>
 
@@ -34,4 +34,4 @@ struct EngineContext {
     ~EngineContext();
 };
 
-#endif//_ENGINECONTEXT_H
+#endif//_ENGINECONTEXT_H_

@@ -1,5 +1,5 @@
-#ifndef _CAMERA_H
-#define _CAMERA_H
+#ifndef _CAMERA_H_
+#define _CAMERA_H_
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -89,15 +89,15 @@ public:
      */
     inline void move_by(GLfloat dx, GLfloat dy, GLfloat dz) {move_by(vec3(dx,dy,dz));}
 
-    // /** @brief Moves the camera by the specified delta along it's local x,z and global y axis. @param delta The delta to move by. */
-    // void move_by_locally(vec3 delta);
-    // /** 
-    //  * @brief Moves the camera by the specified delta along it's local x,z and global y axis.
-    //  * @param x The delta to move by on the local x axis.
-    //  * @param y The delta to move by on the global y axis.
-    //  * @param z The delta to move by on the local z axis.
-    //  */
-    // inline void move_by_locally(GLfloat dx, GLfloat dy, GLfloat dz) {move_by(vec3(dx,dy,dz));}
+    /** @brief Moves the camera by the specified delta along it's local x,z and global y axis. @param delta The delta to move by. */
+    void move_by_local(vec3 delta);
+    /** 
+     * @brief Moves the camera by the specified delta along it's local x,z and global y axis.
+     * @param x The delta to move by on the local x axis.
+     * @param y The delta to move by on the global y axis.
+     * @param z The delta to move by on the local z axis.
+     */
+    inline void move_by_local(GLfloat dx, GLfloat dy, GLfloat dz) {move_by(vec3(dx,dy,dz));}
     
 
     /** @brief Rotates the camera by the specified delta. @param delta The delta as (pitch,yaw) in degrees [-180,180]. */
@@ -133,4 +133,4 @@ public:
     ~Camera();
 };
 
-#endif//_CAMERA_H
+#endif//_CAMERA_H_
