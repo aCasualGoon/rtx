@@ -16,32 +16,13 @@ string get_siblingPath(string filepath, string sibling) {
     return filepath.substr(0, last_slash + 1) + sibling;
 }
 
-// converts "path/to/file.glsl" to "_file_glsl_"
+// converts "path/to/file.glsl" to "_PATH_TO_FILE_GLSL_"
 string get_includeName(string path) {
     string result = "_";
-    for(char c : path) {
-        // if(c == '/' || c == '\\')
-        //     continue;
-        // if(c == '.')
-        //     result += '_';
-        // else
-        //     result += std::toupper(c);
-
-        switch(c)
-        {
-        case '/':
-        case '\\':
-            continue;
-        
-        case '.':
-            result += '_';
-            break;
-
-        default:
-            result += std::toupper(c);
-        }
-    }
-
+    for(char c : path)
+        result += c == '/' || c == '\\' || c == '.' 
+            ? '_' 
+            : toupper(c);
     return result + "_";
 }
 
@@ -62,7 +43,6 @@ string parseFile(string filepath, unordered_set<string> already_included) {
     stringstream ss(content), result;
 
     string line;
-    uint processed_lines = 0; // for #line directive
     while (getline(ss, line)) {
         if (line.find("#include") == string::npos) {
             result << line << '\n';
@@ -83,14 +63,13 @@ string parseFile(string filepath, unordered_set<string> already_included) {
         result << "#define " << include_name << '\n';
         result << "#line 1" << '\n';
 
-        string content2include = cache.count(include_path) 
-            ? cache[include_path]
-            : parseFile(get_siblingPath(filepath, include_path), already_included);
-        cache[include_path] = content2include;
-        result << content2include << '\n';
+        if(cache.count(include_path) == 0) {
+            string content2include = parseFile(get_siblingPath(filepath, include_path), already_included);
+            cache[include_path] = content2include;
+        }
+        result << cache[include_path] << '\n';
 
         result << "#endif\n";
-        result << "#line " << processed_lines + 1 << '\n';
     }
     return result.str();
 }

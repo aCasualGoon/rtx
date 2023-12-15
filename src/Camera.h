@@ -19,7 +19,6 @@ private:
     vec3 position;
     vec2 angular_rotation; // rotation as (pitch,yaw) / (along local x axis, along y axis) in degrees [-180,180].
     quat rotation;
-    vec2 clip; /** x = near, y = far */
     float fov;
     float fov_rad;
     GLuint VAO, VBO, EBO;
@@ -54,25 +53,6 @@ public:
     void set_rotation(GLfloat pitch, GLfloat yaw);
     /** Sets the camera's rotation as (pitch,yaw) in degrees. @param rotation The new rotation as (pitch,yaw) in degrees [-180,180]. */
     inline void set_rotation(vec2 rotation) { set_rotation(rotation.x,rotation.y); }
-
-    /** Gets the camera's clipping planes. @return The camera's clipping planes (near, far). */
-    vec2 get_clip();
-    /** Sets the camera's clipping planes. @param clip The new clipping planes (near, far). */
-    void set_clip(vec2 clip);
-    /**
-     * Sets the camera's clipping planes.
-     * @param clip_near The new near clipping plane.
-     * @param clip_far The new far clipping plane.
-     */
-    inline void set_clip(float clip_near, float clip_far) {set_clip(vec2(clip_near,clip_far));}
-    /** Gets the camera's near clipping plane. @return The camera's near clipping plane. */
-    GLfloat get_clip_near();
-    /** Sets the camera's near clipping plane. @param clip_near The new near clipping plane. */
-    void set_clip_near(float clip_near);
-    /** Gets the camera's far clipping plane. @return The camera's far clipping plane. */
-    GLfloat get_clip_far();
-    /** Sets the camera's far clipping plane. @param clip_far The new far clipping plane. */
-    void set_clip_far(float clip_far);
 
     /** Gets the camera's field of view in degrees. @return The camera's field of view. */
     GLfloat get_fov();

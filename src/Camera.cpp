@@ -49,7 +49,6 @@ Camera::Camera(EngineContext *context, Shader *shader)
 
     set_position(0.0f, 0.0f, -5.0f);
     set_rotation(0.0f, 0.0f);
-    set_clip(0.1f, 1000.0f);
     set_fov(60.0f);
 
     init_quad_data(VAO, VBO, EBO);
@@ -57,17 +56,15 @@ Camera::Camera(EngineContext *context, Shader *shader)
 }
 
 void Camera::render() {
-    // calculate the cam2world matrix
-    mat4 cam2world = inverse(mat4_cast(conjugate(rotation)) * translate(mat4(1.0f), -position));
-    // set the cam2world matrix in the shader
-    shader->setMatrix("cam2world", cam2world);
+    // calculate & set the cam2world matrix
+    shader->setMatrix("cam2world", transpose(mat4_cast(rotation)) * translate(mat4(1.0f), position));
     
-    // calculate near clip data (width, height, distance)
-    GLfloat near_clip_width = 2.0f * tan(radians(fov / 2.0f)) * this->clip.x;
+    // calculate & set the near clip data (width, height)
+    // we use an imaginary clip plane at distance 1.0 to calculate the ray position and direction 
+    // we don't actually clip
+    GLfloat near_clip_width = 2.0f * tan(radians(fov / 2.0f));
     GLfloat near_clip_height = near_clip_width / context->get_aspect_ratio();
-    vec3 near_clip_data = vec3(near_clip_width, near_clip_height, clip.x);
-    // set the near clip data in the shader
-    shader->setFloat3("near_clip_data", near_clip_data);
+    shader->setFloat2("near_clip_data", vec2(near_clip_width, near_clip_height));
     
     // Draw the quad
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -104,19 +101,6 @@ void Camera::set_rotation(GLfloat pitch, GLfloat yaw) {
     // Store the rotation in euler angles
     angular_rotation = vec2(pitch, yaw);
 }
-
-vec2 Camera::get_clip()
-    { return this->clip; }
-void Camera::set_clip(vec2 clip)
-    { this->clip = clip; }
-GLfloat Camera::get_clip_near()
-    { return this->clip.x; }
-void Camera::set_clip_near(float clip_near)
-    { this->clip.x = clip_near; }
-GLfloat Camera::get_clip_far()
-    { return this->clip.y; }
-void Camera::set_clip_far(float clip_far)
-    { this->clip.y = clip_far; }
 
 GLfloat Camera::get_fov()
     { return this->fov; }

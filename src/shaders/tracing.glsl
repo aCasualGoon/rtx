@@ -1,5 +1,5 @@
 uniform mat4 cam2world;
-uniform vec3 near_clip_data; //(width, height, dist)
+uniform vec2 near_clip_data; //(width, height) just used for ray generation, we don't actually clip
 
 struct Ray { vec3 origin; vec3 dir; vec3 invDir; };
 
@@ -56,11 +56,11 @@ float intsec_rayTriangle(Ray ray, vec3 a, vec3 b, vec3 c) {
 }
 
 vec3 frag(vec2 uv) {
-    vec4 world_pos = cam2world * vec4(near_clip_data.xy * (uv - 0.5), near_clip_data.z, 1.0);
+    vec4 world_pos = cam2world * vec4(near_clip_data.xy * (uv - 0.5), 1.0, 1.0);
 
     Ray ray;
-        ray.origin = world_pos.xyz / world_pos.w;
-        ray.dir = normalize(ray.origin - cam2world[3].xyz);
+        ray.origin = cam2world[3].xyz;
+        ray.dir = normalize(world_pos.xyz/world_pos.w - ray.origin);
         ray.invDir = 1/ray.dir;
 
     float hitdst = intsec_rayTriangle(ray, vec3(-0.5,-0.5,0.0), vec3(0.0,0.5,0.0), vec3(0.5,-0.5,0.0));
