@@ -1,6 +1,6 @@
 # Makefile configuration
 CC :=ccache g++
-CFLAGS := -g -fuse-ld=gold #-Wall
+CFLAGS := -g -fuse-ld=gold -Wall
 # INCLUDES := 
 # LDFLAGS := 
 LDLIBS := -lSDL2 -lGL -lGLEW
