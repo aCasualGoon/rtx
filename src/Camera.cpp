@@ -52,25 +52,22 @@ Camera::Camera(EngineContext *context, Shader *shader)
     set_clip(0.1f, 1000.0f);
     set_fov(60.0f);
 
-    init_quad_data(this->VAO, this->VBO, this->EBO);
+    init_quad_data(VAO, VBO, EBO);
     shader->use();
 }
 
-void Camera::render()
-{
+void Camera::render() {
     // calculate the cam2world matrix
-    mat4 cam2world = inverse(mat4_cast(conjugate(this->rotation)) * translate(mat4(1.0f), -this->position));
+    mat4 cam2world = inverse(mat4_cast(conjugate(rotation)) * translate(mat4(1.0f), -position));
     // set the cam2world matrix in the shader
-    // this->shader->setMatrix("cam2world", cam2world);
-    glUniformMatrix4fv(glGetUniformLocation(this->shader->program, "cam2world"), 1, GL_FALSE, value_ptr(cam2world));
-
+    shader->setMatrix("cam2world", cam2world);
+    
     // calculate near clip data (width, height, distance)
-    GLfloat near_clip_width = 2.0f * tan(radians(this->fov / 2.0f)) * this->clip.x;
-    GLfloat near_clip_height = near_clip_width / this->context->get_aspect_ratio();
-    vec3 near_clip_data = vec3(near_clip_width, near_clip_height, this->clip.x);
-    // near_clip_data = vec3(1.0);
+    GLfloat near_clip_width = 2.0f * tan(radians(fov / 2.0f)) * this->clip.x;
+    GLfloat near_clip_height = near_clip_width / context->get_aspect_ratio();
+    vec3 near_clip_data = vec3(near_clip_width, near_clip_height, clip.x);
     // set the near clip data in the shader
-    this->shader->setFloat3("near_clip_data", near_clip_data);
+    shader->setFloat3("near_clip_data", near_clip_data);
     
     // Draw the quad
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -85,7 +82,7 @@ void Camera::set_position(vec3 position)
     { this->position = position; }
 
 vec2 Camera::get_rotation()
-{ return angular_rotation; }
+    { return angular_rotation; }
 
 void Camera::set_rotation(GLfloat pitch, GLfloat yaw) {
     // Clamp and normalize yaw
@@ -129,8 +126,8 @@ void Camera::set_fov(float fov)
 void Camera::move_by(vec3 delta)
     { this->position += delta; }
 
-void Camera::move_by_local(vec3 delta) 
-    { move_by(mat4_cast(this->rotation) * vec4(delta, 1.0f)); }
+void Camera::move_by_local(vec3 delta)
+    { move_by((vec3)(mat4_cast(this->rotation) * vec4(delta.x, 0, delta.z, 1.0f)) + vec3(0,delta.y,0)); }
 
 void Camera::rotate_by(vec2 delta)
     { set_rotation(get_rotation() + delta); }

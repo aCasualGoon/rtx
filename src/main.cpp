@@ -3,8 +3,8 @@
 #include "Camera.h"
 #include <memory>
 #include <list>
+#include <SDL2/SDL.h>
 using std::unique_ptr, std::make_unique, std::move;
-using std::list;
 
 constexpr const char *WINDOW_TITLE = "Shaded Window. Exciting stuff!";
 constexpr int WINDOW_POS_X   = 100;
@@ -53,15 +53,23 @@ bool loop(EngineContext *context, float delta_time) {
             case SDL_QUIT:
                 running = false;
                 break;
+            
             case SDL_WINDOWEVENT:
                 if (event->window.event == SDL_WINDOWEVENT_RESIZED)
                     glViewport(0, 0, event->window.data1, event->window.data2);
                 break;
+            
+            // case SDL_MOUSEMOTION:
+            //     camera.rotate_by_clamped(event->motion.yrel * 0.1, event->motion.xrel * 0.1);
+            //     break;
 
             default:break;
         }
 
     }
+
+    if(isKeyDown(SDL_SCANCODE_ESCAPE))
+        running = false;
 
     GLfloat dpitch = -getAxis(SDL_SCANCODE_DOWN,SDL_SCANCODE_UP) * 0.1;
     GLfloat dyaw = getAxis(SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT) * 0.1;
@@ -84,14 +92,12 @@ int main(int argc, char *argv[]) {
     if (!inited.success) return 1;
 
     context = *inited.context_ptr;
-    shader = *inited.shader_ptr;
     camera = *inited.camera_ptr;
 
     uint64 last_frame_time = SDL_GetTicks64();
 
     bool running = true;
     while(running) {
-        // running = loop(&context);
         float current_frame_time = SDL_GetTicks64();
         running = loop(&context, current_frame_time - last_frame_time);
         camera.render();

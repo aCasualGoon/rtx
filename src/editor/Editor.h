@@ -5,7 +5,7 @@
 #include "../Camera.h"
 
 /**
- * @brief Class to handle the Editor interactions.
+ * Class to handle the Editor interactions.
  * The Editor uses the Dear ImGui library to create its UI.
 */
 class Editor {
