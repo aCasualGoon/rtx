@@ -40,10 +40,10 @@ string read_file(string filepath)
 
 string parseFile(string filepath, unordered_set<string> already_included) {
     string content = read_file(filepath);
-    stringstream ss(content), result;
+    stringstream instream(content), result;
 
     string line;
-    while (getline(ss, line)) {
+    while (getline(instream, line)) {
         if (line.find("#include") == string::npos) {
             result << line << '\n';
             continue;
