@@ -65,7 +65,7 @@ void Camera::render() {
     GLfloat near_clip_width = 2.0f * tan(radians(fov / 2.0f));
     GLfloat near_clip_height = near_clip_width / context->get_aspect_ratio();
     shader->setFloat2("near_clip_data", vec2(near_clip_width, near_clip_height));
-    
+
     // Draw the quad
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

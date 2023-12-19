@@ -55,10 +55,6 @@ float intsec_rayTriangle(Ray ray, vec3 a, vec3 b, vec3 c) {
 uniform mat4 cam2world;
 uniform vec2 near_clip_data; //(width, height) just used for ray generation, we don't actually clip
 
-layout(std430, binding = 0) buffer triangle_buffer {
-    vec3 vertices[];
-};
-
 vec3 frag(vec2 uv) {
     vec4 world_pos = cam2world * vec4(near_clip_data.xy * (uv - 0.5), 1.0, 1.0);
 
@@ -67,15 +63,9 @@ vec3 frag(vec2 uv) {
         ray.dir = normalize(world_pos.xyz/world_pos.w - ray.origin);
         ray.invDir = 1/ray.dir;
 
-    // float hitdst = intsec_rayTriangle(ray, vec3(-0.5,-0.5,0.0), vec3(0.0,0.5,0.0), vec3(0.5,-0.5,0.0));
-    // if(hitdst >= 0)
-    //     return vec3(1.0, 1.0, 1.0);
-
-    for(int i = 0; i < 1; i++) {
-        float hitdst = intsec_rayTriangle(ray, vertices[i*3], vertices[i*3+1], vertices[i*3+2]);
-        if(hitdst >= 0)
-            return vec3(1.0, 1.0, 1.0);   
-    }
+    float hitdst = intsec_rayTriangle(ray, vec3(-0.5,-0.5,0.0), vec3(0.0,0.5,0.0), vec3(0.5,-0.5,0.0));
+    if(hitdst >= 0)
+        return vec3(1.0, 1.0, 1.0);
 
     return vec3(ray.dir);
 }
