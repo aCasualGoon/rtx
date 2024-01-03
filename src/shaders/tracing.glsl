@@ -55,7 +55,7 @@ float intsec_rayTriangle(Ray ray, vec3 a, vec3 b, vec3 c) {
 uniform mat4 cam2world;
 uniform vec2 near_clip_data; //(width, height) just used for ray generation, we don't actually clip
 
-vec3 frag(vec2 uv) {
+vec3 trace(vec2 uv) {
     vec4 world_pos = cam2world * vec4(near_clip_data.xy * (uv - 0.5), 1.0, 1.0);
 
     Ray ray;
@@ -69,3 +69,60 @@ vec3 frag(vec2 uv) {
 
     return vec3(ray.dir);
 }
+
+// #define EPSILON 0.0001
+
+// float frameSDF(vec3 p) {
+//     vec3 b = vec3(0.5, 0.5, 0.5);
+//     float e = 0.05;
+//     p = abs(p  )-b;
+//     vec3 q = abs(p+e)-e;
+//     return min(min(
+//         length(max(vec3(p.x,q.y,q.z),0.0))+min(max(p.x,max(q.y,q.z)),0.0),
+//         length(max(vec3(q.x,p.y,q.z),0.0))+min(max(q.x,max(p.y,q.z)),0.0)),
+//         length(max(vec3(q.x,q.y,p.z),0.0))+min(max(q.x,max(q.y,p.z)),0.0));
+// }
+
+// float sphereSDF(vec3 p) {
+//     return length(p) - 0.5;
+// }
+
+// float smin(float a, float b, float k) {
+//     float h = max(k - abs(a - b), 0.0) / k;
+//     return min(a, b) - h * h * h * k * (1.0 / 6.0);
+// }
+
+// float sceneSDF(vec3 p) {
+//     return smin(frameSDF(p),sphereSDF(p),0.5);
+// }
+
+// vec3 estimateNormal(vec3 p) {
+//     return normalize(vec3(
+//         sceneSDF(vec3(p.x + EPSILON, p.y, p.z)) - sceneSDF(vec3(p.x - EPSILON, p.y, p.z)),
+//         sceneSDF(vec3(p.x, p.y + EPSILON, p.z)) - sceneSDF(vec3(p.x, p.y - EPSILON, p.z)),
+//         sceneSDF(vec3(p.x, p.y, p.z  + EPSILON)) - sceneSDF(vec3(p.x, p.y, p.z - EPSILON))
+//     ));
+// }
+
+// vec3 trace(vec2 uv) {
+//     vec4 world_pos = cam2world * vec4(near_clip_data.xy * (uv - 0.5), 1.0, 1.0);
+
+//     Ray ray;
+//         ray.origin = cam2world[3].xyz;
+//         ray.dir = normalize(world_pos.xyz/world_pos.w - ray.origin);
+//         ray.invDir = 1/ray.dir;
+
+//     float depth = 0;
+//     for(int i = 0; i < 100; i++) {
+//         vec3 rayend = ray.origin + ray.dir * depth;
+//         float dist = sceneSDF(rayend);
+//         if(dist < EPSILON) {
+//             float light = dot(estimateNormal(rayend), vec3(0.486664, 0.811107, -0.324443)) * 0.5 + 0.5;
+//             return vec3(1.0, 1.0, 1.0) * light;
+//         }
+
+//         depth += dist;
+//     }
+
+//     return vec3(0.0, 0.0, 0.0);
+// }

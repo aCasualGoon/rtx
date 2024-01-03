@@ -1,6 +1,7 @@
 #include "EngineContext.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Time.h"
 #include <memory>
 #include <list>
 #include <SDL2/SDL.h>
@@ -16,6 +17,10 @@ constexpr int RENDERER_FLAGS = SDL_RENDERER_ACCELERATED;
 
 constexpr const char *SHADER_SOURCE_VERTEX   = "src/shaders/vertex.glsl";
 constexpr const char *SHADER_SOURCE_FRAGMENT = "src/shaders/fragment.glsl";
+
+constexpr float MOVESPEED = 0.02;
+constexpr float TURNSPEED = 0.5;
+constexpr float EXPECTED_DELTA_TIME = 0.016;
 
 EngineContext context;
 Shader shader;
@@ -45,7 +50,8 @@ init_result init() {
 const Uint8 *keyboard_state = SDL_GetKeyboardState(NULL);
 #define isKeyDown(KEY) keyboard_state[KEY]
 #define getAxis(KEYLOW,KEYHIGH) (keyboard_state[KEYHIGH] - keyboard_state[KEYLOW])
-bool loop(EngineContext *context, float delta_time) {
+bool loop(EngineContext *context) {
+    printf("%f|%f\n",(double)Time::delta(),Time::normaldelta());
     SDL_Event *event = &context->event;
     bool running = true;
     while (SDL_PollEvent(event)) {
@@ -71,8 +77,8 @@ bool loop(EngineContext *context, float delta_time) {
     if(isKeyDown(SDL_SCANCODE_ESCAPE))
         running = false;
 
-    GLfloat dpitch = -getAxis(SDL_SCANCODE_DOWN,SDL_SCANCODE_UP) * 0.1;
-    GLfloat dyaw = getAxis(SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT) * 0.1;
+    GLfloat dpitch = -getAxis(SDL_SCANCODE_DOWN,SDL_SCANCODE_UP) * TURNSPEED * Time::normaldelta();
+    GLfloat dyaw = getAxis(SDL_SCANCODE_LEFT,SDL_SCANCODE_RIGHT) * TURNSPEED * Time::normaldelta();
     if(dpitch != 0 || dyaw != 0)
         camera.rotate_by_clamped(dpitch,dyaw);
 
@@ -82,7 +88,7 @@ bool loop(EngineContext *context, float delta_time) {
     vec3 dmove = vec3(dx,dy,dz);
     if(length(dmove) > 1)
         dmove = normalize(dmove);
-    camera.move_by_local(dmove * 0.005f);
+    camera.move_by_local(dmove * MOVESPEED * Time::normaldelta());
 
     return running;
 }
@@ -94,13 +100,10 @@ int main(int argc, char *argv[]) {
     context = *inited.context_ptr;
     camera = *inited.camera_ptr;
 
-    uint64 last_frame_time = SDL_GetTicks64();
-
     bool running = true;
     while(running) {
-        float current_frame_time = SDL_GetTicks64();
-        running = loop(&context, current_frame_time - last_frame_time);
+        Time::step();
+        running = loop(&context);
         camera.render();
-        last_frame_time = current_frame_time;
     }
 }

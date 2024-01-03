@@ -1,17 +1,17 @@
-#include <SDL2/SDL.h>
-#include <chrono>
-using namespace std::chrono;
-/** A struct that manages time-related data */
-struct Time {
-    private:
-        high_resolution_clock::time_point lastCpuTime;
-        Uint64 lastGpuTime;
-        int frameCount = 0;
-        float timeAccumulator = 0.0f;
+#ifndef _TIME_H_CUSTOM_
+#define _TIME_H_CUSTOM_
 
-    public:
-        float delta_time = 0.0f; /** The time delta between the current and the last frame in seconds. */
-        float delta_cpu = 0.0f;  /** The time the CPU took to render the last frame in seconds. */
-        float delta_gpu = 0.0f;  /** The time the GPU took to render the last frame in seconds. */
-        int   framerate = 0;     /** The framerate in frames per second. */
-};
+#include <SDL2/SDL.h>
+
+namespace Time
+{
+    /**The time in ms since last iteration*/
+    uint64_t delta();
+    /**The time since the last iteration normalized to be aproximately 1*/
+    float normaldelta();
+    /**Steps the time forward to the current iteration*/
+    void step();
+}
+
+
+#endif//_TIME_H_CUSTOM_

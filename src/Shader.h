@@ -2,15 +2,16 @@
 #define _SHADER_H_
 
 #include <unordered_map>
+#include <string>
+#include <vector>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-#include <string>
 using namespace glm;
 
 /** A struct representing a shader program. */
 struct Shader {
 private:
-    std::unordered_map<std::string, GLint> uniform_locations; /** A map of uniform variable names to their locations. */
+    std::unordered_map<std::string, GLint> uniform_ids; /** A map of uniform variable names to their locations. */
     GLuint program; /** The OpenGL shader program. */
 public:
     /**
@@ -240,6 +241,16 @@ public:
      * @param value The values to set.
      */
     void setMatrix(std::string name, const mat4x4&);
+
+//     /**
+//      * Sets a Shader Storage Buffer Object (from a vector) in this shader program.
+//      * @param name The name of the SSBO
+//      * @param value The values to set.
+//     */
+//    template<typename T> // because of template, implementation in header is needed
+//    void setBuffer(std::string name, const std::vector<T>) {
+
+//    }
 
     /** Cleans up the resources used by this shader program. */
     ~Shader();

@@ -9,6 +9,8 @@ using std::string, std::unordered_map, std::unordered_set, std::stringstream, st
 
 unordered_map<string, string> cache;
 
+#define startswith(STRING,PREFIX) (STRING.rfind(PREFIX, 0) == 0)
+
 string get_siblingPath(string filepath, string sibling) {
     size_t last_slash = filepath.find_last_of("/\\");
     if (last_slash == string::npos)
@@ -24,6 +26,10 @@ string get_includeName(string path) {
             ? '_' 
             : toupper(c);
     return result + "_";
+}
+
+string get_includeId(string path) {
+    return "0";
 }
 
 string read_file(string filepath)
@@ -42,8 +48,25 @@ string parseFile(string filepath, unordered_set<string> already_included) {
     string content = read_file(filepath);
     stringstream instream(content), result;
 
+    string includeName = get_includeName(filepath);
+    string includeId = get_includeId(filepath);
     string line;
+    getline(instream, line);
+    if(startswith(line,"#version")) {
+        result << line << '\n';
+        result << "#ifndef " << includeName << '\n';
+        result << "#define " << includeName << '\n';
+        result << "#line 2 " << includeId   << '\n';
+    } else {
+        result << "#ifndef " << includeName << '\n';
+        result << "#define " << includeName << '\n';
+        result << "#line 1 " << includeId   << '\n';
+        result << line << '\n';
+    }
+
+    size_t linenum = 1; // compensate for already processed line 1
     while (getline(instream, line)) {
+        linenum++;
         if (line.find("#include") == string::npos) {
             result << line << '\n';
             continue;
@@ -58,19 +81,16 @@ string parseFile(string filepath, unordered_set<string> already_included) {
         if (!already_included.insert(include_path).second)
             throw std::runtime_error("Circular #include directive in file: '" + filepath + "'");
 
-        string include_name = get_includeName(include_path);
-        result << "#ifndef " << include_name << '\n';
-        result << "#define " << include_name << '\n';
-        result << "#line 1" << '\n';
-
         if(cache.count(include_path) == 0) {
             string content2include = parseFile(get_siblingPath(filepath, include_path), already_included);
             cache[include_path] = content2include;
         }
-        result << cache[include_path] << '\n';
 
-        result << "#endif\n";
+        result << cache[include_path] << '\n';
+        result << "#line " << linenum+1 << "\n";
     }
+
+    result << "#endif" << "\n";
     return result.str();
 }
 
@@ -82,7 +102,9 @@ string loadShaderSource(string filepath) {
         cache.clear();
         throw e;
     }
-    
+
+    printf(content.c_str());
+
     cache.clear();
     return content;
 }

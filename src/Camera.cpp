@@ -15,7 +15,6 @@ const GLfloat vertices[20] = {
 };
 const GLuint indices[6] = { 0, 1, 2, 2, 3, 0 };
 
-// GLuint VAO, VBO, EBO;
 void init_quad_data(GLuint &VAO, GLuint &VBO, GLuint &EBO)
 {
     // Create and bind a Vertex Array Object
@@ -57,7 +56,7 @@ Camera::Camera(EngineContext *context, Shader *shader)
 
 void Camera::render() {
     // calculate & set the cam2world matrix
-    shader->setMatrix("cam2world", transpose(mat4_cast(rotation)) * translate(mat4(1.0f), position));
+    shader->setMatrix("cam2world", inverse(mat4_cast(conjugate(rotation)) * mat4(1,0,0,0,0,1,0,0,0,0,1,0,-position.x,-position.y,-position.z,1)));
     
     // calculate & set the near clip data (width, height)
     // we use an imaginary clip plane at distance 1.0 to calculate the ray position and direction 
@@ -82,24 +81,8 @@ vec2 Camera::get_rotation()
     { return angular_rotation; }
 
 void Camera::set_rotation(GLfloat pitch, GLfloat yaw) {
-    // Clamp and normalize yaw
-    yaw = fmod(yaw + 180.0f, 360.0f);
-    if (yaw < 0) yaw += 360.0f;
-    yaw -= 180.0f;
-
-    // Convert to radians
-    GLfloat pitchRad = glm::radians(pitch);
-    GLfloat yawRad = glm::radians(yaw);
-
-    // Create quaternions
-    glm::quat pitchQuat = glm::angleAxis(pitchRad, glm::vec3(1, 0, 0));
-    glm::quat yawQuat = glm::angleAxis(yawRad, glm::vec3(0, 1, 0));
-
-    // Combine quaternions
-    rotation = yawQuat * pitchQuat;
-
-    // Store the rotation in euler angles
     angular_rotation = vec2(pitch, yaw);
+    rotation = angleAxis(radians(yaw), glm::vec3(0, 1, 0)) * angleAxis(radians(pitch), glm::vec3(1, 0, 0));
 }
 
 GLfloat Camera::get_fov()
